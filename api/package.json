@@ -5,6 +5,7 @@
   "author": "",
   "private": true,
   "license": "UNLICENSED",
+  "packageManager": "pnpm@11.24.0",
   "type": "module",
   "scripts": {
     "build": "nest build",
@@ -20,13 +21,14 @@
     "test:cov": "vitest run --coverage",
     "test:debug": "vitest --inspect-brk --no-file-parallelism",
     "test:e2e": "vitest run --config ./vitest.config.e2e.ts",
-    "prisma:generate": "prisma generate"
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "@nestjs/common": "^12.0.1",
     "@nestjs/core": "^12.0.1",
     "@nestjs/platform-express": "^12.0.1",
     "@prisma/client": "6.19.3",
+    "dotenv": "^18.0.10",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1"
   },
