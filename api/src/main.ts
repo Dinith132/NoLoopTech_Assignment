@@ -5,6 +5,11 @@ import { AppModule } from './app.module.js';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  const origin = process.env.FRONTEND_ORIGIN;
+  if (!origin) {
+    throw new Error('FRONTEND_ORIGIN is not set');
+  }
+  app.enableCors({ origin });
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
