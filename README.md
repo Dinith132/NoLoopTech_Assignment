@@ -84,9 +84,9 @@ Copy `api/.env.example` to `api/.env`.
 | --- | --- | --- |
 | `DATABASE_URL` | SQLite database file used by Prisma | `file:./dev.db` |
 | `PORT` | Port the API listens on | `3001` |
-| `FRONTEND_ORIGIN` | Browser origin allowed by CORS | `http://localhost:3000` |
+| `CORS_ORIGIN` | Browser origin allowed by CORS. When unset, the API allows `http://localhost:3000`. | `http://localhost:3000` |
 
-The API exits on startup if `FRONTEND_ORIGIN` is not set. If `PORT` is not set, it listens on port 3000.
+If `PORT` is not set, the API listens on port 3000.
 
 ### Web
 
@@ -131,12 +131,32 @@ Invalid request data returns 400. A task id that does not exist returns 404. A n
 - Filter by status
 - Sort by due date, with tasks that have no due date last
 
+## Docker Compose
+
+From the repository root:
+
+```bash
+docker compose up --build
+```
+
+The web app runs at http://localhost:3000. The API runs at http://localhost:3001.
+
+```bash
+docker compose down
+```
+
+```bash
+docker compose down -v
+```
+
+`docker compose down -v` removes the volume that stores the SQLite database.
+
 ## Troubleshooting
 
 - Prisma Client is missing. `pnpm install` in `api` runs `prisma generate`. If that step was skipped, run `pnpm prisma generate` in `api`. The install must be allowed to run the Prisma build scripts listed in `api/pnpm-workspace.yaml`.
 - The Node.js version is too old. Next.js 16.4.6 requires Node.js 20.9.0 or newer.
 - Port 3000 or 3001 is already in use. Stop the other process, or the web app may start on a different port. CORS only allows `http://localhost:3000`.
-- The browser shows a CORS or network error. `FRONTEND_ORIGIN` must be the web app origin, and `NEXT_PUBLIC_API_URL` must be the API origin. Restart both apps after changing either value.
+- The browser shows a CORS or network error. `CORS_ORIGIN` must be the web app origin, and `NEXT_PUBLIC_API_URL` must be the API origin. Restart both apps after changing either value.
 - The task list fails to load. Confirm the API is running at the URL in `web/.env.local`, and that `pnpm prisma migrate deploy` has been run in `api`.
 
 ## How I used AI
