@@ -20,6 +20,14 @@ Both `api/package.json` and `web/package.json` set `packageManager` to `pnpm@11.
 corepack enable
 ```
 
+If that fails with `command not found`, install the same pnpm version directly:
+
+```bash
+npm install -g pnpm@11.24.0
+```
+
+On Linux or macOS with a system-wide Node installation, `corepack enable` may need `sudo`.
+
 ## Project structure
 
 ```text
@@ -32,6 +40,7 @@ api/
   .env.example
   Dockerfile
   package.json
+  pnpm-workspace.yaml
 web/
   src/app/
   src/components/
@@ -43,15 +52,15 @@ web/
 docker-compose.yml
 ```
 
-`api` and `web` are separate pnpm projects. Install and run each one on its own.
+`api/pnpm-workspace.yaml` only holds pnpm settings, including the Prisma build-script allowlist. `api` and `web` are not a workspace. Install and run each one on its own.
 
 ## Setup and run
 
 1. Clone the repository and enter it:
 
 ```bash
-git clone <repository-url>
-cd <repository-directory>
+git clone https://github.com/Dinith132/NoLoopTech_Assignment.git
+cd NoLoopTech_Assignment
 ```
 
 2. Set up and start the API:
@@ -66,7 +75,7 @@ pnpm start:dev
 
 The API runs at http://localhost:3001.
 
-3. In a second terminal, set up and start the web app from the repository root:
+3. Open a second terminal at the repository root, then run:
 
 ```bash
 cd web
@@ -92,8 +101,6 @@ Copy `api/.env.example` to `api/.env`.
 | `DATABASE_URL` | SQLite database file used by Prisma | `file:./dev.db` |
 | `PORT` | Port the API listens on | `3001` |
 | `CORS_ORIGIN` | Browser origin allowed by CORS. When unset, the API allows `http://localhost:3000`. | `http://localhost:3000` |
-
-If `PORT` is not set, the API listens on port 3000.
 
 ### Web
 
