@@ -6,11 +6,13 @@ A task manager with two apps. The API stores tasks in SQLite. The web app lists 
 
 - API: NestJS, Prisma 6.19.3, SQLite, class-validator
 - Web: Next.js 16.4.6, React 19.3.0, TypeScript, Tailwind CSS, shadcn/ui
+- Docker Compose, for running both apps together
 
 ## Prerequisites
 
-- Node.js 20.9.0 or newer
+- Node.js 22.13 or newer
 - pnpm 11.24.0
+- Docker with Docker Compose, if you use the Docker Compose setup below
 
 Both `api/package.json` and `web/package.json` set `packageManager` to `pnpm@11.24.0`. Enable Corepack so that version is used:
 
@@ -28,6 +30,7 @@ api/
   src/prisma/
   src/tasks/
   .env.example
+  Dockerfile
   package.json
 web/
   src/app/
@@ -35,7 +38,9 @@ web/
   src/lib/
   src/types/
   .env.example
+  Dockerfile
   package.json
+docker-compose.yml
 ```
 
 `api` and `web` are separate pnpm projects. Install and run each one on its own.
@@ -73,6 +78,8 @@ pnpm dev
 The web app runs at http://localhost:3000.
 
 4. Start the API before using the web app. The web app reads tasks from the API.
+
+To run both apps with Docker Compose instead, use the commands in the Docker Compose section. You do not need the install steps above for that.
 
 ## Environment variables
 
@@ -133,36 +140,34 @@ Invalid request data returns 400. A task id that does not exist returns 404. A n
 
 ## Docker Compose
 
-From the repository root:
+Install Docker with the Compose plugin, then run this from the repository root:
 
 ```bash
 docker compose up --build
 ```
 
-The web app runs at http://localhost:3000. The API runs at http://localhost:3001.
+The web app runs at http://localhost:3000. The API runs at http://localhost:3001. The API image runs the Prisma migrations on startup. Tasks are stored in a Docker volume at `/data/dev.db`.
+
+Stop the containers:
 
 ```bash
 docker compose down
 ```
 
+Stop the containers and delete the database volume:
+
 ```bash
 docker compose down -v
 ```
 
-`docker compose down -v` removes the volume that stores the SQLite database.
-
 ## Troubleshooting
 
 - Prisma Client is missing. `pnpm install` in `api` runs `prisma generate`. If that step was skipped, run `pnpm prisma generate` in `api`. The install must be allowed to run the Prisma build scripts listed in `api/pnpm-workspace.yaml`.
-- The Node.js version is too old. Next.js 16.4.6 requires Node.js 20.9.0 or newer.
+- The Node.js version is too old. pnpm 11.24.0 requires Node.js 22.13 or newer. Next.js 16.4.6 requires Node.js 20.9.0 or newer.
 - Port 3000 or 3001 is already in use. Stop the other process, or the web app may start on a different port. CORS only allows `http://localhost:3000`.
 - The browser shows a CORS or network error. `CORS_ORIGIN` must be the web app origin, and `NEXT_PUBLIC_API_URL` must be the API origin. Restart both apps after changing either value.
 - The task list fails to load. Confirm the API is running at the URL in `web/.env.local`, and that `pnpm prisma migrate deploy` has been run in `api`.
 
 ## How I used AI
 
-I used Cursor to generate parts of the code and Claude to plan the architecture and UI prompts.
-
-What I changed or fixed in the generated code:
-
-- TODO: the author will fill this in
+I used Claude Code for the architecture, Google Stitch for the design, and Cursor for the coding.
